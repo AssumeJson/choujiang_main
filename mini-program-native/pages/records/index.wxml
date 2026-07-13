@@ -1,0 +1,61 @@
+<view class="container">
+  <view class="header">
+    <view class="titleRow">
+      <van-icon name="gift" size="40" color="#FFD700" />
+      <text class="title">中奖记录</text>
+    </view>
+    <text class="subtitle">查看您的中奖情况</text>
+  </view>
+
+  <view wx:if="{{config}}" class="configCard">
+    <view class="configHeader">
+      <text class="configName">{{config.name}}</text>
+      <van-tag class="statusTag {{'status' + config.status}}">
+        {{getStatusText(config.status)}}
+      </van-tag>
+    </view>
+    <view wx:if="{{config.status === 1}}" class="waitingInfo">
+      <van-icon name="clock" size="24" color="#666" />
+      <text class="waitingText">开奖时间：</text>
+      <text class="waitingValue">{{formatTime(config.drawTime)}}</text>
+      <text class="waitingTip">届时将从所有有效票根中抽取中奖者，每人只能中一次奖</text>
+    </view>
+    <view wx:if="{{config.status === 0}}" class="waitingInfo">
+      <van-icon name="bell" size="24" color="#666" />
+      <text class="waitingText">活动尚未开始，请耐心等待</text>
+      <text class="waitingValue">活动开始后即可上传票根参与抽奖</text>
+    </view>
+  </view>
+
+  <view wx:if="{{config && config.status === 2 && records.length === 0 && !loading}}" class="emptyState">
+    <van-icon name="sad-o" size="96" color="#ccc" />
+    <text class="emptyText">暂无中奖记录</text>
+    <text class="emptyTip">再接再厉，下次好运！</text>
+  </view>
+
+  <view wx:if="{{records.length > 0}}" class="recordsList">
+    <view class="listTitle">
+      <van-icon name="trophy" size="30" color="#FFD700" />
+      <text>我的中奖记录</text>
+    </view>
+    <view wx:for="{{records}}" wx:key="id" class="recordCard">
+      <van-icon name="gift" size="40" color="#FF6B6B" />
+      <view class="recordContent">
+        <text class="prizeName">{{item.prizeName || item.prize}}</text>
+        <text class="recordTime">中奖时间：{{formatTime(item.createdAt || item.createTime || '')}}</text>
+        <van-tag wx:if="{{item.isClaimed === 1}}" class="claimedTag" type="success">已兑奖</van-tag>
+        <van-tag wx:if="{{item.isClaimed === 0}}" class="unclaimedTag" type="warning">待兑奖</van-tag>
+      </view>
+      <van-button wx:if="{{item.isClaimed === 0}}" class="btnClaim" bindtap="handleClaim" data-record-id="{{item.id || 0}}" type="primary" round>
+        立即兑奖
+      </van-button>
+    </view>
+  </view>
+
+  <view wx:if="{{!loading && config && config.status !== 2 && records.length === 0}}" class="tipCard">
+    <van-icon name="lightbulb-o" size="64" color="#FFD700" />
+    <text class="tipTitle">上传票根参与抽奖</text>
+    <text class="tipDesc">每次上传一张有效的电影票根，即可获得一次中奖机会。开奖后将在本页面显示中奖结果。</text>
+    <van-button class="btnUpload" bindtap="handleUpload" type="primary" round size="large">去上传票根</van-button>
+  </view>
+</view>

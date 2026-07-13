@@ -1,0 +1,85 @@
+<view class="container">
+  <view class="userInfo">
+    <view class="avatar">
+      <image class="avatarImg" src="{{user && user.avatar || 'https://picsum.photos/id/64/200/200'}}" mode="aspectFill" />
+    </view>
+    <text class="nickname">{{user && user.nickname || '电影爱好者'}}</text>
+    <text class="phone">{{user && user.phone || '未绑定手机号'}}</text>
+    <view class="statsRow">
+      <view class="statItem">
+        <text class="statNumber">{{user && user.ticketCount || 0}}</text>
+        <text class="statLabel">上传票根</text>
+      </view>
+      <view class="statItem">
+        <text class="statNumber">{{user && user.hasWon === 1 ? '1' : '0'}}</text>
+        <text class="statLabel">中奖次数</text>
+      </view>
+      <view class="statItem">
+        <text class="statNumber">{{user && user.hasBindIdCard === 1 ? '已绑定' : '未绑定'}}</text>
+        <text class="statLabel">身份证</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="bindSection">
+    <view wx:if="{{user && user.hasBindIdCard === 0}}" class="bindCard">
+      <van-icon name="warning" size="48" color="#FF9800" />
+      <view class="bindContent">
+        <text class="bindTitle">未绑定身份证</text>
+        <text class="bindDesc">兑奖时需要核对身份证信息，请尽快绑定</text>
+      </view>
+      <van-button class="btnBind" bindtap="openBindModal" type="primary" round>立即绑定</van-button>
+    </view>
+    <view wx:else class="bindCard">
+      <van-icon name="success" size="48" color="#4CAF50" />
+      <view class="bindContent">
+        <text class="bindTitle">已绑定身份证</text>
+        <text class="bindDesc">兑奖时将使用此身份证进行核对</text>
+      </view>
+      <van-tag class="boundText" type="success">已完成</van-tag>
+    </view>
+  </view>
+
+  <view class="menuSection">
+    <view class="menuItem" bindtap="handleMenuTap" data-index="0">
+      <van-icon name="tickets" size="28" color="#FF6B6B" />
+      <text class="menuText">我的票根</text>
+      <van-tag wx:if="{{user && user.ticketCount > 0}}" class="menuBadge">{{user && user.ticketCount}}</van-tag>
+      <text class="menuArrow">›</text>
+    </view>
+    <view class="menuItem" bindtap="handleMenuTap" data-index="1">
+      <van-icon name="gift" size="28" color="#FF6B6B" />
+      <text class="menuText">我的奖品</text>
+      <van-tag wx:if="{{user && user.hasWon === 1}}" class="menuBadge">1</van-tag>
+      <text class="menuArrow">›</text>
+    </view>
+    <view class="menuItem" bindtap="handleMenuTap" data-index="2">
+      <van-icon name="setting-o" size="28" color="#FF6B6B" />
+      <text class="menuText">设置</text>
+      <text class="menuArrow">›</text>
+    </view>
+    <view class="menuItem" bindtap="handleMenuTap" data-index="3">
+      <van-icon name="question-o" size="28" color="#FF6B6B" />
+      <text class="menuText">帮助与反馈</text>
+      <text class="menuArrow">›</text>
+    </view>
+  </view>
+
+  <view class="logoutSection">
+    <van-button class="btnLogout" bindtap="handleLogout" plain round>退出登录</van-button>
+  </view>
+
+  <view wx:if="{{showBindModal}}" class="modalOverlay" bindtap="closeBindModal">
+    <view class="modalContent" catchtap="">
+      <text class="modalTitle">绑定身份证</text>
+      <text class="modalDesc">请输入您的身份证号码，用于兑奖时身份核对</text>
+      <input class="modalInput" type="number" placeholder="请输入18位身份证号" value="{{idCard}}" bindinput="onIdCardInput" maxlength="18" />
+      <view class="modalBtnGroup">
+        <van-button class="btnCancel" bindtap="closeBindModal" plain round>取消</van-button>
+        <van-button class="btnConfirm" bindtap="handleBindIdCard" loading="{{binding}}" type="primary" round>
+          {{binding ? '绑定中...' : '确认绑定'}}
+        </van-button>
+      </view>
+    </view>
+  </view>
+</view>

@@ -5,3 +5,6 @@
 /.pai/
 /.vscode/
 /admin-backend/target/
+/mini-program/.auth/
+/mini-program/.pai/
+/mini-program-native/miniprogram_npm/

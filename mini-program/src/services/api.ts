@@ -52,9 +52,7 @@ const request = async <T = any>(
 
 export const login = async (data: {
   code?: string
-  phone?: string
-  nickname?: string
-  avatar?: string
+  phoneCode?: string
 }) => {
   return request<{ data: any }>('/mini/login', 'POST', data, false)
 }

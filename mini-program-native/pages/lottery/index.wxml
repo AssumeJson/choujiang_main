@@ -1,0 +1,42 @@
+<view class="container">
+  <view class="header">
+    <view class="titleRow">
+      <van-icon name="gift" size="40" color="#FFD700" />
+      <text class="title">幸运抽奖</text>
+    </view>
+    <text class="subtitle">点击按钮，试试运气！</text>
+  </view>
+
+  <view class="wheelContainer">
+    <view class="wheel" style="{{isSpinning ? 'animation: spin 2s ease-out' : ''}}">
+      <view class="wheelInner">
+        <van-icon wx:if="{{hasSpun && result}}" name="{{isWinning(result.prize) ? 'gift' : 'tickets'}}" size="64" color="#FF6B6B" />
+        <van-icon wx:else name="gift" size="64" color="#FF6B6B" />
+        <text class="wheelText">{{hasSpun && result ? result.prize : '点击抽奖'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{!hasSpun}}" class="btnSection">
+    <van-button class="btnLottery" bindtap="handleLottery" loading="{{isSpinning}}" type="primary" round size="large">
+      {{isSpinning ? '抽奖中...' : '立即抽奖'}}
+    </van-button>
+    <text class="lotteryTip">每次上传票根可增加中奖机会，每人只能中一次奖</text>
+  </view>
+
+  <view wx:else class="resultCard">
+    <van-icon name="{{isWinning(result && result.prize) ? 'success' : 'smile-o'}}" size="96" color="{{isWinning(result && result.prize) ? '#FFD700' : '#ccc'}}" />
+    <text class="resultTitle">{{isWinning(result && result.prize) ? '恭喜中奖！' : '谢谢参与'}}</text>
+    <text class="resultPrize">{{result && result.prize}}</text>
+    <view class="btnGroup">
+      <van-button class="btnSecondary" bindtap="handleBack" plain round>返回首页</van-button>
+      <van-button class="btnPrimary" bindtap="handleCheckRecords" type="primary" round>查看记录</van-button>
+    </view>
+  </view>
+
+  <view wx:if="{{config && config.status !== 1}}" class="statusCard">
+    <van-icon name="{{config.status === 0 ? 'clock' : 'trophy'}}" size="64" color="#FF6B6B" />
+    <text class="statusText">{{config.status === 0 ? '活动尚未开始，请耐心等待' : '活动已结束，请查看中奖记录'}}</text>
+    <van-button class="btnStatus" bindtap="handleBack" type="primary" round>返回首页</van-button>
+  </view>
+</view>

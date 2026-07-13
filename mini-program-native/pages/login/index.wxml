@@ -1,0 +1,85 @@
+<view class="container">
+  <view class="header">
+    <view class="titleRow">
+      <van-icon name="film" size="48" color="#fff" />
+      <text class="title">电影票抽奖</text>
+    </view>
+    <text class="subtitle">登录参与活动</text>
+  </view>
+
+  <view class="loginForm">
+    <!-- <view class="formItem">
+      <view class="formLabel">
+        <van-icon name="user" size="28" color="#666" />
+        <text>昵称</text>
+      </view>
+      <view class="formInputWrapper">
+        <input
+          class="formInput"
+          placeholder="请点击下方按钮获取"
+          value="{{nickname}}"
+          disabled
+        />
+      </view>
+    </view> -->
+
+    <view class="formItem">
+      <view class="formLabel">
+        <van-icon name="phone" size="28" color="#666" />
+        <text>手机号</text>
+      </view>
+      <input
+        class="formInput"
+        type="number"
+        placeholder="请输入手机号或点击下方按钮获取"
+        value="{{phone}}"
+        bindinput="onPhoneInput"
+      />
+    </view>
+
+    <!-- <van-button
+      class="btnWechat"
+      bindtap="handleGetUserProfile"
+      loading="{{loading}}"
+      open-type="getUserProfile"
+      round
+      size="large"
+    >
+      <van-icon name="camera" size="28" />
+      获取微信头像和昵称
+    </van-button> -->
+
+    <van-button
+      class="btnPhone"
+      bindtap="handleGetPhoneNumber"
+      loading="{{loading}}"
+      open-type="getPhoneNumber"
+      round
+      size="large"
+    >
+      <van-icon name="phone" size="28" />
+      获取微信手机号
+    </van-button>
+
+    <van-button
+      class="btnPrimary"
+      bindtap="handleSubmit"
+      loading="{{loading}}"
+      disabled="{{loading || !nickname}}"
+      type="primary"
+      round
+      size="large"
+    >
+      {{loading ? '登录中...' : '立即登录'}}
+    </van-button>
+
+    <view class="tipText">
+      <text>登录即表示同意《活动参与协议》</text>
+    </view>
+  </view>
+
+  <view class="guestLogin">
+    <text class="guestText">不想授权？</text>
+    <text class="guestLink" bindtap="handleQuickLogin">游客登录</text>
+  </view>
+</view>

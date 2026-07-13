@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,12 +31,16 @@ public class MiniUserService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private static final String APP_ID = "wx9e7dcfbb0b737e10";
+    private static final String APP_SECRET = "your-secret";
+
     public Result<MiniLoginResponse> login(MiniLoginRequest request) {
         String openid = null;
-        
+        String phoneNumber = null;
+
         if (request.getCode() != null && !request.getCode().isEmpty()) {
             try {
-                String url = "https://api.weixin.qq.com/sns/jscode2session?appid=wx9e7dcfbb0b737e10&secret=your-secret&js_code=" + request.getCode() + "&grant_type=authorization_code";
+                String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + APP_ID + "&secret=" + APP_SECRET + "&js_code=" + request.getCode() + "&grant_type=authorization_code";
                 String response = restTemplate.getForObject(url, String.class);
                 JsonNode node = objectMapper.readTree(response);
                 openid = node.has("openid") ? node.get("openid").asText() : null;
@@ -51,6 +53,29 @@ public class MiniUserService {
             openid = "mock_openid_" + System.currentTimeMillis();
         }
 
+        if (request.getPhoneCode() != null && !request.getPhoneCode().isEmpty()) {
+            try {
+                String tokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + APP_ID + "&secret=" + APP_SECRET;
+                String tokenResponse = restTemplate.getForObject(tokenUrl, String.class);
+                JsonNode tokenNode = objectMapper.readTree(tokenResponse);
+                String accessToken = tokenNode.has("access_token") ? tokenNode.get("access_token").asText() : null;
+
+                if (accessToken != null) {
+                    String phoneUrl = "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=" + accessToken;
+                    Map<String, String> phoneBody = new HashMap<>();
+                    phoneBody.put("code", request.getPhoneCode());
+                    String phoneResponse = restTemplate.postForObject(phoneUrl, phoneBody, String.class);
+                    JsonNode phoneNode = objectMapper.readTree(phoneResponse);
+                    if (phoneNode.has("errcode") && phoneNode.get("errcode").asInt() == 0) {
+                        JsonNode phoneInfo = phoneNode.get("phone_info");
+                        phoneNumber = phoneInfo.has("phoneNumber") ? phoneInfo.get("phoneNumber").asText() : null;
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("获取手机号失败，使用模拟手机号");
+            }
+        }
+
         LambdaQueryWrapper<MiniUser> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(MiniUser::getOpenid, openid);
         MiniUser user = miniUserMapper.selectOne(wrapper);
@@ -58,23 +83,16 @@ public class MiniUserService {
         if (user == null) {
             user = new MiniUser();
             user.setOpenid(openid);
-            user.setNickname(request.getNickname() != null ? request.getNickname() : "用户" + openid.substring(0, 8));
-            user.setAvatar(request.getAvatar() != null ? request.getAvatar() : "");
+            user.setNickname("用户" + openid.substring(0, 8));
+            user.setAvatar("");
             user.setHasBindIdCard(0);
             user.setHasWon(0);
             user.setTicketCount(0);
             miniUserMapper.insert(user);
-        } else {
-            if (request.getNickname() != null && !request.getNickname().isEmpty()) {
-                user.setNickname(request.getNickname());
-            }
-            if (request.getAvatar() != null && !request.getAvatar().isEmpty()) {
-                user.setAvatar(request.getAvatar());
-            }
         }
 
-        if (request.getPhone() != null && !request.getPhone().isEmpty()) {
-            user.setPhone(request.getPhone());
+        if (phoneNumber != null && !phoneNumber.isEmpty()) {
+            user.setPhone(phoneNumber);
         }
 
         miniUserMapper.updateById(user);

@@ -1,0 +1,76 @@
+<view class="container">
+  <view class="header">
+    <view class="titleRow">
+      <van-icon name="film" size="40" color="#FF6B6B" />
+      <text class="title">电影票抽奖</text>
+    </view>
+    <text class="subtitle">上传票根，赢取好礼</text>
+  </view>
+
+  <view wx:if="{{config}}" class="configCard">
+    <view class="configHeader">
+      <text class="configTitle">{{config.name}}</text>
+      <van-tag class="statusTag {{'status' + config.status}}">
+        {{getStatusText(config.status)}}
+      </van-tag>
+    </view>
+    <view wx:if="{{config.status === 1}}" class="drawTime">
+      <van-icon name="clock" size="24" color="rgba(255,255,255,0.9)" />
+      <text class="drawLabel">开奖时间：</text>
+      <text class="drawValue">{{formatDrawTime(config.drawTime)}}</text>
+    </view>
+    <text wx:if="{{config.description}}" class="configDesc">{{config.description}}</text>
+  </view>
+
+  <view class="statsCard">
+    <view class="statsRow">
+      <view class="statItem">
+        <text class="statNumber">{{user && user.ticketCount || 0}}</text>
+        <text class="statLabel">已上传票根</text>
+      </view>
+      <view class="statItem">
+        <text class="statNumber">{{stats && stats.uniqueUserCount || 0}}</text>
+        <text class="statLabel">参与人数</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <text class="sectionTitle">立即参与</text>
+    <view class="actionCard">
+      <van-icon name="tickets" size="64" color="#FF6B6B" />
+      <text class="actionTitle">上传电影票根</text>
+      <text class="actionDesc">每次上传一张有效的电影票根，即可获得一次中奖机会</text>
+      <van-button class="btnPrimary" bindtap="handleUpload" type="primary" round>
+        开始上传
+      </van-button>
+    </view>
+  </view>
+
+  <view class="section">
+    <text class="sectionTitle">活动规则</text>
+    <view class="rulesCard">
+      <view class="ruleItem">
+        <view class="ruleIndex">1</view>
+        <text class="ruleText">每次上传一张有效的电影票根，即可获得一次中奖机会</text>
+      </view>
+      <view class="ruleItem">
+        <view class="ruleIndex">2</view>
+        <text class="ruleText">一个用户只能中奖一次，上传越多票根中奖概率越高</text>
+      </view>
+      <view class="ruleItem">
+        <view class="ruleIndex">3</view>
+        <text class="ruleText">兑奖时需要核对身份证和手机号信息</text>
+      </view>
+      <view class="ruleItem">
+        <view class="ruleIndex">4</view>
+        <text class="ruleText">活动最终解释权归主办方所有</text>
+      </view>
+    </view>
+  </view>
+
+  <van-button class="btnRecords" bindtap="handleRecords" type="warning" round size="large">
+    <van-icon name="gift" size="28" />
+    查看中奖记录
+  </van-button>
+</view>

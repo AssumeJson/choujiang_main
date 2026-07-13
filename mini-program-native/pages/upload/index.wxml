@@ -1,0 +1,157 @@
+<view class="container">
+  <view wx:if="{{!imageUrl}}" class="uploadArea">
+    <van-icon name="camera" size="96" color="#FF6B6B" />
+    <text class="uploadTitle">上传电影票根</text>
+    <text class="uploadDesc">拍照或从相册选择您的电影票根照片</text>
+    <van-button
+      class="btnUpload"
+      bindtap="handleChooseImage"
+      loading="{{uploading}}"
+      type="primary"
+      round
+      size="large"
+    >
+      {{uploading ? '识别中...' : '选择图片'}}
+    </van-button>
+  </view>
+
+  <view wx:else class="previewArea">
+    <view class="previewImage">
+      <image
+        class="previewImg"
+        src="{{imageUrl}}"
+        mode="aspectFill"
+      />
+    </view>
+
+    <view wx:if="{{ticketStub && !editing}}" class="recognizedInfo">
+      <view class="infoTitle">
+        <van-icon name="success" size="32" color="#4CAF50" />
+        <text>识别成功</text>
+      </view>
+      <view class="infoRow">
+        <text class="infoLabel">影片名称</text>
+        <text class="infoValue">{{ticketStub.movieName}}</text>
+      </view>
+      <view class="infoRow">
+        <text class="infoLabel">放映时间</text>
+        <text class="infoValue">{{ticketStub.showTime}}</text>
+      </view>
+      <view class="infoRow">
+        <text class="infoLabel">影院</text>
+        <text class="infoValue">{{ticketStub.cinema}}</text>
+      </view>
+      <view class="infoRow">
+        <text class="infoLabel">位置</text>
+        <text class="infoValue">{{ticketStub.cinemaLocation || '未识别'}}</text>
+      </view>
+      <view class="infoRow">
+        <text class="infoLabel">座位</text>
+        <text class="infoValue">{{ticketStub.seat || '未识别'}}</text>
+      </view>
+
+      <view class="btnGroup">
+        <van-button class="btnSecondary" bindtap="handleRetake" plain round>
+          重新上传
+        </van-button>
+        <van-button class="btnEdit" bindtap="handleEdit" type="primary" plain round>
+          修改信息
+        </van-button>
+        <van-button class="btnConfirm" bindtap="handleConfirm" type="primary" round>
+          确认提交
+        </van-button>
+      </view>
+    </view>
+
+    <view wx:else class="editForm">
+      <view class="infoTitle">
+        <van-icon name="edit" size="32" color="#FF6B6B" />
+        <text>编辑票根信息</text>
+      </view>
+      <view class="formItem">
+        <text class="formLabel">影片名称</text>
+        <input
+          class="formInput"
+          placeholder="请输入影片名称"
+          value="{{editForm.movieName}}"
+          bindinput="onFieldInput"
+          data-field="movieName"
+        />
+      </view>
+      <view class="formItem">
+        <text class="formLabel">放映时间</text>
+        <input
+          class="formInput"
+          placeholder="请输入放映时间"
+          value="{{editForm.showTime}}"
+          bindinput="onFieldInput"
+          data-field="showTime"
+        />
+      </view>
+      <view class="formItem">
+        <text class="formLabel">影院</text>
+        <input
+          class="formInput"
+          placeholder="请输入影院名称"
+          value="{{editForm.cinema}}"
+          bindinput="onFieldInput"
+          data-field="cinema"
+        />
+      </view>
+      <view class="formItem">
+        <text class="formLabel">位置</text>
+        <input
+          class="formInput"
+          placeholder="请输入影院位置"
+          value="{{editForm.cinemaLocation}}"
+          bindinput="onFieldInput"
+          data-field="cinemaLocation"
+        />
+      </view>
+      <view class="formItem">
+        <text class="formLabel">座位</text>
+        <input
+          class="formInput"
+          placeholder="请输入座位号"
+          value="{{editForm.seat}}"
+          bindinput="onFieldInput"
+          data-field="seat"
+        />
+      </view>
+
+      <view class="btnGroup">
+        <van-button class="btnSecondary" bindtap="cancelEdit" plain round>
+          取消
+        </van-button>
+        <van-button class="btnConfirm" bindtap="handleUpload" type="primary" round>
+          确认上传
+        </van-button>
+      </view>
+    </view>
+  </view>
+
+  <view class="tipsSection">
+    <view class="tipsTitle">
+      <van-icon name="info-o" size="30" color="#FF6B6B" />
+      <text>上传提示</text>
+    </view>
+    <view class="tipsList">
+      <view class="tipItem">
+        <view class="tipDot"></view>
+        <text class="tipText">请确保票根照片清晰可见，包含影片名称、放映时间等信息</text>
+      </view>
+      <view class="tipItem">
+        <view class="tipDot"></view>
+        <text class="tipText">建议在光线充足的环境下拍摄，避免反光和模糊</text>
+      </view>
+      <view class="tipItem">
+        <view class="tipDot"></view>
+        <text class="tipText">每张票根只能使用一次，多次上传同一张票根无效</text>
+      </view>
+      <view class="tipItem">
+        <view class="tipDot"></view>
+        <text class="tipText">上传票根越多，中奖机会越多，但每人只能中一次奖</text>
+      </view>
+    </view>
+  </view>
+</view>
