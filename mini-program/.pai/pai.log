@@ -1,0 +1,13 @@
+[16:06:58.107] Try reusing port from lock file: 57500
+[16:06:58.136] Server listening on port 57500, PID 18744
+[16:06:58.166] readProjectFiles, Found 67 files to read.
+[Preview Server] 以下文件超过 2MB 已跳过（微信小程序单分包限制为 2MB，大文件建议使用 CDN 加载）:
+  .swc\plugins\v7_windows_x86_64_0.104.8\7175c2f701c258997803d93e6e53a285d375ab2d784ed9f0357fc9c4363590cb (2.7MB)
+[16:06:58.279] Starting PAI Cloud Dev...
+[16:06:59.444] [PAI SDK] createCloudSession response: {
+  "code": 0,
+  "msg": "success",
+  "sandboxId": "vefaas-f0vkicge-zwx1wbt5u0-d9a9p882b52e1oanpbh0-sandbox",
+  "endpoint": "https://sd62opo6oqou1ckhsuo00.apigateway-cn-beijing.volceapi.com"
+}
+[16:06:59.735] [PAI SDK] cloudServer.start called, appId: pai-preview-trae-5542e086

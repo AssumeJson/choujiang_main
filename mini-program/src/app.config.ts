@@ -1,0 +1,48 @@
+export default defineAppConfig({
+  pages: [
+    'pages/login/index',
+    'pages/home/index',
+    'pages/upload/index',
+    'pages/records/index',
+    'pages/profile/index',
+    'pages/lottery/index'
+  ],
+  window: {
+    backgroundTextStyle: 'light',
+    navigationBarBackgroundColor: '#FF6B6B',
+    navigationBarTitleText: '电影票抽奖',
+    navigationBarTextStyle: 'white'
+  },
+  tabBar: {
+    color: '#999999',
+    selectedColor: '#FF6B6B',
+    backgroundColor: '#FFFFFF',
+    borderStyle: 'black',
+    list: [
+      {
+        pagePath: 'pages/home/index',
+        text: '首页',
+        iconPath: 'assets/tabbar/home.png',
+        selectedIconPath: 'assets/tabbar/home-selected.png'
+      },
+      {
+        pagePath: 'pages/upload/index',
+        text: '上传',
+        iconPath: 'assets/tabbar/upload.png',
+        selectedIconPath: 'assets/tabbar/upload-selected.png'
+      },
+      {
+        pagePath: 'pages/records/index',
+        text: '记录',
+        iconPath: 'assets/tabbar/records.png',
+        selectedIconPath: 'assets/tabbar/records-selected.png'
+      },
+      {
+        pagePath: 'pages/profile/index',
+        text: '我的',
+        iconPath: 'assets/tabbar/profile.png',
+        selectedIconPath: 'assets/tabbar/profile-selected.png'
+      }
+    ]
+  }
+})

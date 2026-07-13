@@ -1,0 +1,128 @@
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 60rpx 40rpx;
+}
+
+.header {
+  text-align: center;
+  padding: 100rpx 0 80rpx;
+
+  .title {
+    display: block;
+    font-size: 48rpx;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 20rpx;
+  }
+
+  .subtitle {
+    display: block;
+    font-size: 28rpx;
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+.loginForm {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.1);
+
+  .formItem {
+    margin-bottom: 30rpx;
+
+    .formLabel {
+      display: block;
+      font-size: 28rpx;
+      color: #666;
+      margin-bottom: 16rpx;
+    }
+
+    .formInputWrapper {
+      width: 100%;
+    }
+
+    .formInput {
+      width: 100%;
+      height: 88rpx;
+      padding: 0 24rpx;
+      border: 2rpx solid #eee;
+      border-radius: 16rpx;
+      font-size: 28rpx;
+      box-sizing: border-box;
+
+      &:focus {
+        border-color: #667eea;
+      }
+
+      &[disabled] {
+        background: #f5f5f5;
+        color: #999;
+      }
+    }
+  }
+
+  .btnWechat {
+    width: 100%;
+    height: 88rpx;
+    line-height: 88rpx;
+    background: #07c160;
+    color: #fff;
+    border-radius: 16rpx;
+    font-size: 28rpx;
+    margin-bottom: 20rpx;
+    border: none;
+  }
+
+  .btnPhone {
+    width: 100%;
+    height: 88rpx;
+    line-height: 88rpx;
+    background: #07c160;
+    color: #fff;
+    border-radius: 16rpx;
+    font-size: 28rpx;
+    margin-bottom: 20rpx;
+    border: none;
+  }
+
+  .btnPrimary {
+    width: 100%;
+    height: 88rpx;
+    line-height: 88rpx;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border-radius: 16rpx;
+    font-size: 28rpx;
+    margin-bottom: 30rpx;
+    border: none;
+
+    &[disabled] {
+      opacity: 0.5;
+    }
+  }
+
+  .tipText {
+    text-align: center;
+    font-size: 24rpx;
+    color: #999;
+  }
+}
+
+.guestLogin {
+  text-align: center;
+  margin-top: 40rpx;
+
+  .guestText {
+    font-size: 26rpx;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .guestLink {
+    font-size: 26rpx;
+    color: #fff;
+    margin-left: 10rpx;
+    text-decoration: underline;
+  }
+}

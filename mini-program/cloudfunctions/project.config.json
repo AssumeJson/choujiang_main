@@ -1,0 +1,6 @@
+{
+  "description": "云函数配置",
+  "setting": {},
+  "compileType": "cloudfunction",
+  "libVersion": "2.6.3"
+}

@@ -1,0 +1,7 @@
+/*/node_modules/
+/mini-program/dist/
+/mini-program/.swc/
+/.idea/
+/.pai/
+/.vscode/
+/admin-backend/target/
