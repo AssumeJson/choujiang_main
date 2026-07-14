@@ -24,3 +24,7 @@ mybatis-plus:
 jwt:
   secret: lottery-secret-key-for-jwt-token-generation-2024
   expiration: 86400000  # 24 hours in milliseconds
+
+wechat:
+  app-id: wx9e7dcfbb0b737e10
+  app_secret: 64bd3af0c1c793cfd1f7e3ee8f466a55

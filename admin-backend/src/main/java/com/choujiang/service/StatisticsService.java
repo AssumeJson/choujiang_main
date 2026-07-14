@@ -33,12 +33,18 @@ public class StatisticsService {
         Map<String, Object> result = new HashMap<>();
         
         Long totalUsers = miniUserMapper.selectCount(null);
+        if (totalUsers == null) totalUsers = 0L;
+        
         Long totalTickets = ticketStubMapper.selectCount(null);
+        if (totalTickets == null) totalTickets = 0L;
+        
         Long totalLotteries = lotteryRecordMapper.selectCount(null);
+        if (totalLotteries == null) totalLotteries = 0L;
         
         LambdaQueryWrapper<LotteryRecord> winWrapper = new LambdaQueryWrapper<>();
         winWrapper.eq(LotteryRecord::getIsWin, 1);
         Long totalWinners = lotteryRecordMapper.selectCount(winWrapper);
+        if (totalWinners == null) totalWinners = 0L;
         
         result.put("totalUsers", totalUsers);
         result.put("totalTickets", totalTickets);

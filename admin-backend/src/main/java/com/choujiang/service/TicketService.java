@@ -160,17 +160,27 @@ public class TicketService {
     public Result<Map<String, Object>> getTicketStats() {
         Map<String, Object> stats = new HashMap<>();
         
+
         LambdaQueryWrapper<TicketStub> validWrapper = new LambdaQueryWrapper<>();
         validWrapper.eq(TicketStub::getIsValid, 1);
-        long validCount = ticketStubMapper.selectCount(validWrapper);
+        Long validCount = ticketStubMapper.selectCount(validWrapper);
+        if (validCount == null) {
+            validCount = 0L;
+        }
         
         LambdaQueryWrapper<TicketStub> usedWrapper = new LambdaQueryWrapper<>();
         usedWrapper.eq(TicketStub::getIsUsedForLottery, 1);
-        long usedCount = ticketStubMapper.selectCount(usedWrapper);
+        Long usedCount = ticketStubMapper.selectCount(usedWrapper);
+        if (usedCount == null) {
+            usedCount = 0L;
+        }
 
-        long uniqueUserCount = ticketStubMapper.selectCount(new LambdaQueryWrapper<TicketStub>()
+        Long uniqueUserCount = ticketStubMapper.selectCount(new LambdaQueryWrapper<TicketStub>()
                 .eq(TicketStub::getIsValid, 1)
                 .groupBy(TicketStub::getUserId));
+        if (uniqueUserCount == null) {
+            uniqueUserCount = 0L;
+        }
         
         stats.put("totalTicketCount", validCount);
         stats.put("usedTicketCount", usedCount);

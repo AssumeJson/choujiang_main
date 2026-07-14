@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, Image, Button, Input } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { getUserInfo, bindIdCard } from '@/services/api'
+import { checkAuth, isLoggedIn, logout } from '@/utils/auth'
 import type { User } from '@/types'
 import styles from './index.module.scss'
 
@@ -12,8 +13,21 @@ const ProfilePage: React.FC = () => {
   const [binding, setBinding] = useState(false)
 
   useEffect(() => {
-    loadUserInfo()
+    checkLoginStatus()
   }, [])
+
+  const checkLoginStatus = async () => {
+    if (!isLoggedIn()) {
+      const authorized = await checkAuth()
+      if (!authorized) {
+        setTimeout(() => {
+          Taro.switchTab({ url: '/pages/home/index' })
+        }, 100)
+        return
+      }
+    }
+    loadUserInfo()
+  }
 
   const loadUserInfo = async () => {
     try {
@@ -62,20 +76,18 @@ const ProfilePage: React.FC = () => {
       content: '确定要退出登录吗？',
       success: (res) => {
         if (res.confirm) {
-          Taro.removeStorageSync('token')
-          Taro.removeStorageSync('userId')
-          Taro.removeStorageSync('nickname')
-          Taro.removeStorageSync('avatar')
-          Taro.removeStorageSync('hasBindIdCard')
-          Taro.navigateTo({ url: '/pages/login/index' })
+          logout()
+          setTimeout(() => {
+            Taro.switchTab({ url: '/pages/home/index' })
+          }, 100)
         }
       }
     })
   }
 
   const menuItems = [
-    { icon: '🎟️', text: '我的票根', page: '', badge: user?.ticketCount || 0 },
-    { icon: '🎁', text: '我的奖品', page: '', badge: user?.hasWon === 1 ? 1 : 0 },
+    { icon: '🎟️', text: '我的票根', page: '', badge: user && user.ticketCount || 0 },
+    { icon: '🎁', text: '我的奖品', page: '', badge: user && user.hasWon === 1 ? 1 : 0 },
     { icon: '⚙️', text: '设置', page: '' },
     { icon: '❓', text: '帮助与反馈', page: '' },
   ]
@@ -86,30 +98,30 @@ const ProfilePage: React.FC = () => {
         <View className={styles.avatar}>
           <Image
             className={styles.avatarImg}
-            src={user?.avatar || 'https://picsum.photos/id/64/200/200'}
+            src={user && user.avatar || 'https://picsum.photos/id/64/200/200'}
             mode='aspectFill'
           />
         </View>
-        <Text className={styles.nickname}>{user?.nickname || '电影爱好者'}</Text>
-        <Text className={styles.phone}>{user?.phone || '未绑定手机号'}</Text>
+        <Text className={styles.nickname}>{user && user.nickname || '电影爱好者'}</Text>
+        <Text className={styles.phone}>{user && user.phone || '未绑定手机号'}</Text>
         <View className={styles.statsRow}>
           <View className={styles.statItem}>
-            <Text className={styles.statNumber}>{user?.ticketCount || 0}</Text>
+            <Text className={styles.statNumber}>{user && user.ticketCount || 0}</Text>
             <Text className={styles.statLabel}>上传票根</Text>
           </View>
           <View className={styles.statItem}>
-            <Text className={styles.statNumber}>{user?.hasWon === 1 ? '1' : '0'}</Text>
+            <Text className={styles.statNumber}>{user && user.hasWon === 1 ? '1' : '0'}</Text>
             <Text className={styles.statLabel}>中奖次数</Text>
           </View>
           <View className={styles.statItem}>
-            <Text className={styles.statNumber}>{user?.hasBindIdCard === 1 ? '已绑定' : '未绑定'}</Text>
+            <Text className={styles.statNumber}>{user && user.hasBindIdCard === 1 ? '已绑定' : '未绑定'}</Text>
             <Text className={styles.statLabel}>身份证</Text>
           </View>
         </View>
       </View>
 
       <View className={styles.bindSection}>
-        {user?.hasBindIdCard === 0 ? (
+        {user && user.hasBindIdCard === 0 ? (
           <View className={styles.bindCard}>
             <View className={styles.bindIcon}>⚠️</View>
             <View className={styles.bindContent}>

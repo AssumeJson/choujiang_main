@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { getWinningRecords, getCurrentLotteryConfig, claimPrize } from '@/services/api'
+import { checkAuth, isLoggedIn } from '@/utils/auth'
 import type { LotteryRecord, LotteryConfig } from '@/types'
 import styles from './index.module.scss'
 
@@ -11,8 +12,21 @@ const RecordsPage: React.FC = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    loadData()
+    checkLoginStatus()
   }, [])
+
+  const checkLoginStatus = async () => {
+    if (!isLoggedIn()) {
+      const authorized = await checkAuth()
+      if (!authorized) {
+        setTimeout(() => {
+          Taro.switchTab({ url: '/pages/home/index' })
+        }, 100)
+        return
+      }
+    }
+    loadData()
+  }
 
   const loadData = async () => {
     try {
@@ -82,14 +96,14 @@ const RecordsPage: React.FC = () => {
               {getStatusText(config.status)}
             </Text>
           </View>
-          {config.status === 1 && (
+          {config && config.status === 1 && (
             <View className={styles.waitingInfo}>
               <Text className={styles.waitingText}>⏰ 开奖时间：</Text>
               <Text className={styles.waitingValue}>{formatTime(config.drawTime)}</Text>
               <Text className={styles.waitingTip}>届时将从所有有效票根中抽取中奖者，每人只能中一次奖</Text>
             </View>
           )}
-          {config.status === 0 && (
+          {config && config.status === 0 && (
             <View className={styles.waitingInfo}>
               <Text className={styles.waitingText}>🔔 活动尚未开始，请耐心等待</Text>
               <Text className={styles.waitingValue}>活动开始后即可上传票根参与抽奖</Text>
@@ -98,7 +112,7 @@ const RecordsPage: React.FC = () => {
         </View>
       )}
 
-      {config?.status === 2 && records.length === 0 && (
+      {config && config.status === 2 && records.length === 0 && (
         <View className={styles.emptyState}>
           <Text className={styles.emptyIcon}>😢</Text>
           <Text className={styles.emptyText}>暂无中奖记录</Text>
@@ -137,7 +151,7 @@ const RecordsPage: React.FC = () => {
         </View>
       )}
 
-      {!loading && config?.status !== 2 && records.length === 0 && (
+      {!loading && config && config.status !== 2 && records.length === 0 && (
         <View className={styles.tipCard}>
           <Text className={styles.tipIcon}>💡</Text>
           <Text className={styles.tipTitle}>上传票根参与抽奖</Text>

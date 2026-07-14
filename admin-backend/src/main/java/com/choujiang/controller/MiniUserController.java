@@ -33,6 +33,16 @@ public class MiniUserController {
     @GetMapping("/user/info")
     public Result<MiniUser> getUserInfo(HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
+        System.out.println("[MiniUserController] getUserInfo called, userId: " + userId);
         return miniUserService.getUserById(userId);
+    }
+
+    @PostMapping("/user/update")
+    public Result<MiniUser> updateUserInfo(HttpServletRequest request, @RequestBody Map<String, String> body) {
+        Long userId = (Long) request.getAttribute("userId");
+        System.out.println("[MiniUserController] updateUserInfo called, userId: " + userId + ", body: " + body);
+        String nickname = body.get("nickname");
+        String avatar = body.get("avatar");
+        return miniUserService.updateUserInfo(userId, nickname, avatar);
     }
 }

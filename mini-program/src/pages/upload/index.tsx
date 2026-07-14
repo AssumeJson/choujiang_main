@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, Button, Image, Input } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { uploadTicket } from '@/services/api'
+import { checkAuth, isLoggedIn } from '@/utils/auth'
 import type { TicketStub } from '@/types'
 import styles from './index.module.scss'
 
@@ -17,6 +18,21 @@ const UploadPage: React.FC = () => {
     cinemaLocation: '',
     seat: ''
   })
+
+  useEffect(() => {
+    checkLoginStatus()
+  }, [])
+
+  const checkLoginStatus = async () => {
+    if (!isLoggedIn()) {
+      const authorized = await checkAuth()
+      if (!authorized) {
+        setTimeout(() => {
+          Taro.switchTab({ url: '/pages/home/index' })
+        }, 100)
+      }
+    }
+  }
 
   const handleChooseImage = async () => {
     try {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { getUserInfo, getCurrentLotteryConfig, getTicketStats } from '@/services/api'
+import { checkAuth, isLoggedIn } from '@/utils/auth'
 import type { User, LotteryConfig, TicketStats } from '@/types'
 import styles from './index.module.scss'
 
@@ -17,19 +18,25 @@ const HomePage: React.FC = () => {
 
   const initData = async () => {
     try {
-      const [userRes, configRes, statsRes] = await Promise.all([
-        getUserInfo(),
+      const [configRes, statsRes] = await Promise.all([
         getCurrentLotteryConfig(),
         getTicketStats()
       ])
-      if (userRes) {
-        setUser(userRes)
-      }
       if (configRes) {
         setConfig(configRes)
       }
       if (statsRes) {
         setStats(statsRes)
+      }
+
+      if (isLoggedIn()) {
+        try {
+          const userRes = await getUserInfo()
+          if (userRes) {
+            setUser(userRes)
+          }
+        } catch {
+        }
       }
     } catch (error) {
       console.error('[Home] Failed to init data:', error)
@@ -38,7 +45,10 @@ const HomePage: React.FC = () => {
     }
   }
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
+    const authorized = await checkAuth()
+    if (!authorized) return
+
     const hasBindIdCard = Taro.getStorageSync('hasBindIdCard')
     if (!hasBindIdCard || hasBindIdCard === 0) {
       Taro.showModal({
@@ -48,7 +58,7 @@ const HomePage: React.FC = () => {
         cancelText: '暂不绑定',
         success: (res) => {
           if (res.confirm) {
-            Taro.navigateTo({ url: '/pages/profile/index' })
+            Taro.switchTab({ url: '/pages/profile/index' })
           } else {
             Taro.switchTab({ url: '/pages/upload/index' })
           }
@@ -59,8 +69,16 @@ const HomePage: React.FC = () => {
     }
   }
 
-  const handleRecords = () => {
+  const handleRecords = async () => {
+    const authorized = await checkAuth()
+    if (!authorized) return
     Taro.switchTab({ url: '/pages/records/index' })
+  }
+
+  const handleProfile = async () => {
+    const authorized = await checkAuth()
+    if (!authorized) return
+    Taro.switchTab({ url: '/pages/profile/index' })
   }
 
   const formatDrawTime = (timeStr: string) => {
@@ -111,11 +129,11 @@ const HomePage: React.FC = () => {
       <View className={styles.statsCard}>
         <View className={styles.statsRow}>
           <View className={styles.statItem}>
-            <Text className={styles.statNumber}>{user?.ticketCount || 0}</Text>
+            <Text className={styles.statNumber}>{user && user.ticketCount || 0}</Text>
             <Text className={styles.statLabel}>已上传票根</Text>
           </View>
           <View className={styles.statItem}>
-            <Text className={styles.statNumber}>{stats?.uniqueUserCount || 0}</Text>
+            <Text className={styles.statNumber}>{stats && stats.uniqueUserCount || 0}</Text>
             <Text className={styles.statLabel}>参与人数</Text>
           </View>
         </View>

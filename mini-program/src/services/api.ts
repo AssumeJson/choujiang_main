@@ -25,6 +25,8 @@ const request = async <T = any>(
     headers['Authorization'] = `Bearer ${token}`
   }
 
+  console.log(`[API] 请求: ${method} ${BASE_URL}${url}, needAuth: ${needAuth}, token: ${token ? '存在' : '不存在'}`)
+
   try {
     const res = await Taro.request({
       url: `${BASE_URL}${url}`,
@@ -32,6 +34,8 @@ const request = async <T = any>(
       data,
       header: headers,
     })
+
+    console.log(`[API] 响应: ${method} ${BASE_URL}${url}, status: ${res.statusCode}, data:`, res.data)
 
     const result = res.data as { code: number; message: string; data: T }
 
@@ -54,15 +58,41 @@ export const login = async (data: {
   code?: string
   phoneCode?: string
 }) => {
-  return request<{ data: any }>('/mini/login', 'POST', data, false)
+  return request<{
+    token: string
+    userId: number
+    openid: string
+    nickname: string
+    avatar: string
+    phone: string
+    hasBindIdCard: number
+    hasWon: number
+    ticketCount: number
+  }>('/mini/login', 'POST', data, false)
 }
 
 export const getUserInfo = async () => {
-  return request<{ data: any }>('/mini/user/info', 'GET')
+  return request<{
+    id: number
+    openid: string
+    nickname: string
+    avatar: string
+    phone: string
+    idCard: string
+    hasBindIdCard: number
+    hasWon: number
+    ticketCount: number
+    createdAt: string
+    updatedAt: string
+  }>('/mini/user/info', 'GET', undefined, true)
 }
 
 export const bindIdCard = async (idCard: string) => {
-  return request<{ data: any }>('/mini/bind-id-card', 'POST', { idCard })
+  return request<any>('/mini/bind-id-card', 'POST', { idCard })
+}
+
+export const updateUserInfo = async (data: { nickname?: string; avatar?: string }) => {
+  return request<any>('/mini/user/update', 'POST', data)
 }
 
 export const uploadTicket = async (data: {
@@ -74,29 +104,40 @@ export const uploadTicket = async (data: {
   cinemaLocation?: string
   seat?: string
 }) => {
-  return request<{ data: any }>('/ticket/upload', 'POST', data)
+  return request<any>('/ticket/upload', 'POST', data)
 }
 
 export const getTicketList = async (page: number = 1, size: number = 10) => {
-  return request<{ data: any }>('/ticket/list?page=' + page + '&size=' + size, 'GET')
+  return request<any>('/ticket/list?page=' + page + '&size=' + size, 'GET')
 }
 
 export const getTicketStats = async () => {
-  return request<{ data: any }>('/ticket/stats', 'GET', undefined, false)
+  return request<{
+    totalTicketCount: number
+    uniqueUserCount: number
+  }>('/ticket/stats', 'GET', undefined, false)
 }
 
 export const getCurrentLotteryConfig = async () => {
-  return request<{ data: any }>('/lottery/config/current', 'GET', undefined, false)
+  return request<{
+    id: number
+    status: number
+    startTime: string
+    endTime: string
+    prizeName: string
+    prizeCount: number
+    createdAt: string
+  }>('/lottery/config/current', 'GET', undefined, false)
 }
 
 export const getLotteryRecords = async (page: number = 1, size: number = 10) => {
-  return request<{ data: any }>('/lottery/records?page=' + page + '&size=' + size, 'GET')
+  return request<any>('/lottery/records?page=' + page + '&size=' + size, 'GET')
 }
 
 export const getWinningRecords = async () => {
-  return request<{ data: any }>('/lottery/records/winning', 'GET')
+  return request<any>('/lottery/records/winning', 'GET')
 }
 
 export const claimPrize = async (recordId: number) => {
-  return request<{ data: any }>('/lottery/claim/' + recordId, 'POST')
+  return request<any>('/lottery/claim/' + recordId, 'POST')
 }

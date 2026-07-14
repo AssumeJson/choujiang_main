@@ -35,6 +35,15 @@ public class TicketController {
 
     @GetMapping("/stats")
     public Result<Map<String, Object>> getTicketStats() {
-        return ticketService.getTicketStats();
+        System.out.println("[TicketController] 收到 /api/ticket/stats 请求");
+        try {
+            Result<Map<String, Object>> result = ticketService.getTicketStats();
+            System.out.println("[TicketController] /api/ticket/stats 请求成功，结果: " + result.getData());
+            return result;
+        } catch (Exception e) {
+            System.out.println("[TicketController] /api/ticket/stats 请求失败: " + e.getMessage());
+            e.printStackTrace();
+            return Result.error("获取统计数据失败: " + e.getMessage());
+        }
     }
 }
