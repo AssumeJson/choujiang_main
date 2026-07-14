@@ -6,6 +6,7 @@ import com.choujiang.dto.MiniLoginResponse;
 import com.choujiang.entity.MiniUser;
 import com.choujiang.service.MiniUserService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/mini")
+@Slf4j
 public class MiniUserController {
 
     @Autowired
@@ -33,14 +35,14 @@ public class MiniUserController {
     @GetMapping("/user/info")
     public Result<MiniUser> getUserInfo(HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
-        System.out.println("[MiniUserController] getUserInfo called, userId: " + userId);
+        log.info("[MiniUserController] getUserInfo called, userId: {}", userId);
         return miniUserService.getUserById(userId);
     }
 
     @PostMapping("/user/update")
     public Result<MiniUser> updateUserInfo(HttpServletRequest request, @RequestBody Map<String, String> body) {
         Long userId = (Long) request.getAttribute("userId");
-        System.out.println("[MiniUserController] updateUserInfo called, userId: " + userId + ", body: " + body);
+        log.info("[MiniUserController] updateUserInfo called, userId: {}, body: {}", userId, body);
         String nickname = body.get("nickname");
         String avatar = body.get("avatar");
         return miniUserService.updateUserInfo(userId, nickname, avatar);

@@ -50,6 +50,7 @@ const LoginPage: React.FC = () => {
       console.log('[Login] 登录API返回:', result)
 
       if (result && result.token) {
+        console.log('[Login] 登录成功，保存用户信息:', result)
         setLoginResult(result)
         setShowProfileInput(true)
       } else {
@@ -72,14 +73,11 @@ const LoginPage: React.FC = () => {
     
     setLoading(true)
     try {
-      if (nickname || avatarUrl) {
-        console.log('[Login] 更新用户信息:', { nickname, avatarUrl })
-        await updateUserInfo({ nickname, avatar: avatarUrl })
-      }
-
+      console.log('[Login] 确认保存用户信息:', { nickname, avatarUrl })
+      
       const { token, userId, hasBindIdCard } = loginResult
       
-      console.log('[Login] 保存用户信息到本地存储...')
+      console.log('[Login] 先保存token到本地存储...')
       setLoginInfo({
         token,
         userId,
@@ -88,6 +86,12 @@ const LoginPage: React.FC = () => {
         hasBindIdCard,
         openid: loginResult.openid
       })
+
+      if (nickname || avatarUrl) {
+        console.log('[Login] 更新用户信息到后端...')
+        await updateUserInfo({ nickname, avatar: avatarUrl })
+        console.log('[Login] 更新用户信息成功')
+      }
 
       Taro.showToast({
         title: '登录成功',
@@ -161,7 +165,7 @@ const LoginPage: React.FC = () => {
               type='nickname'
               placeholder='请输入昵称'
               value={nickname}
-              onInput={handleNicknameChange}
+              onChange={handleNicknameChange}
             />
           </View>
         </View>

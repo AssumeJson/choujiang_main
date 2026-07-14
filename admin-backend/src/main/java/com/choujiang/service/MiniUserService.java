@@ -71,6 +71,7 @@ public class MiniUserService {
                 JsonNode tokenNode = objectMapper.readTree(tokenResponse);
                 String accessToken = tokenNode.has("access_token") ? tokenNode.get("access_token").asText() : null;
 
+                // todo 获取手机号码：小程序需要在微信后台开启"手机号快速验证"能力登录 微信公众平台 → 开发 → 接口设置 → 手机号快速验证 → 开通
                 if (accessToken != null) {
                     String phoneUrl = "https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=" + accessToken;
                     Map<String, String> phoneBody = new HashMap<>();
@@ -94,23 +95,36 @@ public class MiniUserService {
             log.info("[MiniLogin] 使用模拟手机号: {}", phoneNumber);
         }
 
+        MiniUser user = null;
+
         LambdaQueryWrapper<MiniUser> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(MiniUser::getOpenid, openid);
-        MiniUser user = miniUserMapper.selectOne(wrapper);
+        user = miniUserMapper.selectOne(wrapper);
+
+        if (user == null) {
+            wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(MiniUser::getPhone, phoneNumber);
+            user = miniUserMapper.selectOne(wrapper);
+            if (user != null) {
+                log.info("[MiniLogin] 通过手机号找到用户: id={}, phone={}", user.getId(), phoneNumber);
+                user.setOpenid(openid);
+                miniUserMapper.updateById(user);
+            }
+        }
 
         if (user == null) {
             user = new MiniUser();
             user.setOpenid(openid);
-            user.setNickname("用户" + openid.substring(0, 8));
+            user.setNickname("用户" + phoneNumber.substring(0, 8));
             user.setAvatar("");
             user.setPhone(phoneNumber);
             user.setHasBindIdCard(0);
             user.setHasWon(0);
             user.setTicketCount(0);
             int insertResult = miniUserMapper.insert(user);
-            log.info("[MiniLogin] 新建用户: insertResult={}, id={}, nickname={}", insertResult, user.getId(), user.getNickname());
+            log.info("[MiniLogin] 新建用户: insertResult={}, id={}, phone={}", insertResult, user.getId(), phoneNumber);
         } else {
-            log.info("[MiniLogin] 找到已存在用户: id={}, nickname={}", user.getId(), user.getNickname());
+            log.info("[MiniLogin] 找到已存在用户: id={}, phone={}", user.getId(), phoneNumber);
             user.setPhone(phoneNumber);
             int updateResult = miniUserMapper.updateById(user);
             log.info("[MiniLogin] 更新用户: updateResult={}", updateResult);
@@ -160,17 +174,17 @@ public class MiniUserService {
         if (user == null) {
             return Result.error("用户不存在");
         }
-        
+
         if (nickname != null && !nickname.isEmpty()) {
             user.setNickname(nickname);
         }
         if (avatar != null && !avatar.isEmpty()) {
             user.setAvatar(avatar);
         }
-        
+
         miniUserMapper.updateById(user);
         log.info("[MiniUser] 更新用户信息: userId={}, nickname={}, avatar={}", userId, nickname, avatar);
-        
+
         return Result.success(user);
     }
 }

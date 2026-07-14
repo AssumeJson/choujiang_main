@@ -15,20 +15,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/api/auth/login",
-                    "/api/auth/register",
-                    "/api/mini/login",
-                    "/api/lottery/config/current",
-                    "/api/ticket/stats",
-                    "/api/export/**"
-                ).permitAll()
-                .anyRequest().permitAll()
-            );
-        
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/api/auth/login",
+                                "/api/auth/register",
+                                "/api/mini/login",
+                                "/api/lottery/config/current",
+                                "/api/ticket/stats",
+                                "/api/export/**",
+                                "/favicon.ico"
+                        ).permitAll()
+                        .anyRequest().permitAll()
+                );
+
         return http.build();
     }
 }
